@@ -1,8 +1,7 @@
 import { of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { concat, mergeMap, map } from 'rxjs/operators';
+import { catchError, concat, mergeMap, map } from 'rxjs/operators';
 import { combineEpics, ofType } from 'redux-observable';
-
 import { FETCH_USERS, default as actions } from './actions';
 
 const body = {
@@ -34,7 +33,8 @@ const fetchUserEpic = action$ => action$.pipe(
       .pipe(
         map(({ response }) => actions.userFetched(response), actions.fetchingUser(false))
       )
-    )
+    ),
+    catchError(err => { throw err })
   );
 
 export default combineEpics(fetchUserEpic);
